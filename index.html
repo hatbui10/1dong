@@ -11,6 +11,7 @@
             --card-bg: #0a0a12;
             --neon-blue: #00f0ff;
             --neon-pink: #ff007f;
+            --neon-green: #39ff14;
             --gold: #ffd700;
             --text-color: #94a3b8;
             --text-light: #f1f5f9;
@@ -34,7 +35,6 @@
         .container {
             width: 100%;
             max-width: 500px;
-            /* Áp dụng chuẩn khoảng cách của bạn */
             margin-top: 30px;
             margin-left: 3px;
             margin-right: 3px;
@@ -77,8 +77,8 @@
         /* Mode Selector Tabs */
         .tabs {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            grid-template-columns: 1fr 1.1fr 1fr;
+            gap: 8px;
             background: #05050a;
             padding: 6px;
             border-radius: 12px;
@@ -89,15 +89,15 @@
             background: transparent;
             border: none;
             color: #64748b;
-            padding: 12px;
+            padding: 10px 4px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 4px;
             transition: all 0.25s ease;
         }
 
@@ -115,8 +115,11 @@
             box-shadow: 0 0 10px rgba(255, 0, 127, 0.15);
         }
 
-        .tab-btn img, .tab-btn span.icon {
-            font-size: 1.1rem;
+        .tab-btn.active[data-mode="html"] {
+            background: rgba(57, 255, 20, 0.05);
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 10px rgba(57, 255, 20, 0.15);
         }
 
         /* Info Box */
@@ -129,13 +132,10 @@
             line-height: 1.4;
         }
 
-        .info-box.css-info {
-            border-left-color: var(--neon-pink);
-        }
+        .info-box.css-info { border-left-color: var(--neon-pink); }
+        .info-box.html-info { border-left-color: var(--neon-green); }
 
-        .info-box strong {
-            color: var(--text-light);
-        }
+        .info-box strong { color: var(--text-light); }
 
         .highlight-js {
             color: #ff007f;
@@ -145,7 +145,7 @@
             font-family: monospace;
         }
 
-        /* Textarea Containers */
+        /* Textareas */
         .field-group {
             display: flex;
             flex-direction: column;
@@ -174,7 +174,7 @@
 
         textarea {
             width: 100%;
-            height: 140px;
+            height: 160px;
             background: #05050a;
             border: 1px solid #1e293b;
             color: #f1f5f9;
@@ -248,7 +248,7 @@
     <!-- Header -->
     <div class="header">
         <h1>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle; margin-right: 4px;">
                 <path d="M4 12V5a2 2 0 0 1 2-2h7l5 5v4"/>
                 <path d="M14 3v5h5"/>
                 <path d="M16 16l-4-4-4 4"/>
@@ -256,24 +256,28 @@
             </svg>
             Merger Pro
         </h1>
-        <p>Định dạng và gộp các khối logic thành một dòng cực nhanh</p>
+        <p>Định dạng và gộp các khối logic gọn gàng</p>
     </div>
 
     <!-- Tabs -->
     <div class="tabs">
         <button class="tab-btn active" data-mode="js" onclick="switchMode('js')">
             <span class="icon" style="color: #f7df1e;">JS</span>
-            Code (JS/TS/HTML)
+            Code
         </button>
         <button class="tab-btn" data-mode="css" onclick="switchMode('css')">
-            <span class="icon" style="color: #00f0ff;">CSS</span>
-            Stylesheet (CSS)
+            <span class="icon" style="color: var(--neon-pink);">Style</span>
+            Style
+        </button>
+        <button class="tab-btn" data-mode="html" onclick="switchMode('html')">
+            <span class="icon" style="color: var(--neon-green);">&lt;/&gt;</span>
+            HTML Divs
         </button>
     </div>
 
     <!-- Info Box -->
     <div id="infoBox" class="info-box">
-        <strong>Chế độ JS:</strong> Tự động viết gộp toàn bộ nội dung của các biến, hàm lại thành 1 dòng. Trình gộp sẽ tự động xuống dòng khi phát hiện từ khóa tiếp theo: <span class="highlight-js">function</span>, <span class="highlight-js">const</span>, <span class="highlight-js">let</span>, hoặc <span class="highlight-js">var</span>.
+        <strong>Chế độ JS:</strong> Gộp các khối code. Tự động xuống dòng khi gặp <span class="highlight-js">function</span>, <span class="highlight-js">const</span>, <span class="highlight-js">let</span>, <span class="highlight-js">var</span>. Biến bên trong function sẽ tự động thụt lề 8 khoảng trắng.
     </div>
 
     <!-- Input -->
@@ -304,29 +308,119 @@
     function switchMode(mode) {
         currentMode = mode;
         
-        // Cập nhật trạng thái Active của các Tab
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelector(`.tab-btn[data-mode="${mode}"]`).classList.add('active');
 
-        // Cập nhật hộp thông tin hướng dẫn
         const infoBox = document.getElementById('infoBox');
         if (mode === 'js') {
             infoBox.className = 'info-box';
-            infoBox.innerHTML = `<strong>Chế độ JS:</strong> Tự động viết gộp toàn bộ nội dung của các biến, hàm lại thành 1 dòng. Trình gộp sẽ tự động xuống dòng khi phát hiện từ khóa tiếp theo: <span class="highlight-js">function</span>, <span class="highlight-js">const</span>, <span class="highlight-js">let</span>, hoặc <span class="highlight-js">var</span>.`;
-        } else {
+            infoBox.innerHTML = `<strong>Chế độ JS:</strong> Gộp các khối code. Tự động xuống dòng khi gặp <span class="highlight-js">function</span>, <span class="highlight-js">const</span>, <span class="highlight-js">let</span>, <span class="highlight-js">var</span>. Biến bên trong function sẽ tự động thụt lề 8 khoảng trắng.`;
+        } else if (mode === 'css') {
             infoBox.className = 'info-box css-info';
             infoBox.innerHTML = `<strong>Chế độ CSS:</strong> Tự động dọn dẹp toàn bộ khoảng trắng dư thừa, đưa mỗi block selector kèm các thuộc tính bên trong nó về nằm gọn gàng trên 1 dòng duy nhất, xuống dòng sau dấu <span class="highlight-js">}</span>.`;
+        } else {
+            infoBox.className = 'info-box html-info';
+            infoBox.innerHTML = `<strong>Chế độ HTML Divs:</strong> Chuẩn hóa phân cấp lề (Tab) cho các thẻ đóng/mở <span class="highlight-js">&lt;div&gt;</span> giúp bạn đối chiếu nhanh, phát hiện ngay các thẻ chưa đóng hoặc bị thừa.`;
         }
         
-        // Reset kết quả khi chuyển tab
         document.getElementById('outputCode').value = '';
     }
 
     function updateCharCount() {
         const text = document.getElementById('inputCode').value;
         document.getElementById('inputCharCount').innerText = `${text.length} ký tự`;
+    }
+
+    // Định dạng JS: Phân tách biến toàn cục và biến cục bộ trong function
+    function formatJS(code) {
+        // Gộp toàn bộ code thô thành 1 dòng sạch
+        let flat = code.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
+
+        // Tạm thời tách các thành phần chính dựa trên các từ khóa khai báo
+        const regex = /(?=(?:function|const|let|var)\b)/g;
+        let blocks = flat.split(regex);
+        
+        let result = [];
+        let inFunction = false;
+        let braceCount = 0;
+
+        for (let i = 0; i < blocks.length; i++) {
+            let block = blocks[i].trim();
+            if (!block) continue;
+
+            // Theo dõi trạng thái đóng/mở ngoặc nhọn để biết đang ở trong hay ngoài function
+            for (let char of block) {
+                if (char === '{') {
+                    braceCount++;
+                } else if (char === '}') {
+                    braceCount--;
+                }
+            }
+
+            // Kiểm tra xem block này bắt đầu bằng từ khóa gì
+            const isFunc = block.startsWith('function');
+            const isVar = block.startsWith('const') || block.startsWith('let') || block.startsWith('var');
+
+            if (isFunc) {
+                // Xuất phát điểm của 1 hàm mới
+                inFunction = true;
+                result.push(block);
+            } else if (isVar) {
+                // Nếu là biến và đang ở trong hàm thì thụt lề 8 khoảng trắng (8 spaces)
+                if (inFunction && braceCount > 0) {
+                    result.push("        " + block);
+                } else {
+                    // Biến toàn cục ngoài hàm đặt thẳng hàng sát lề
+                    result.push(block);
+                }
+            } else {
+                // Các khối dòng khác không bắt đầu bằng từ khóa chính
+                if (inFunction && braceCount > 0) {
+                    result.push("        " + block);
+                } else {
+                    result.push(block);
+                }
+            }
+
+            // Nếu số ngoặc nhọn trở về bằng 0 thì ta đã ra ngoài hoàn toàn các function
+            if (braceCount <= 0) {
+                braceCount = 0;
+                inFunction = false;
+            }
+        }
+
+        return result.join('\n');
+    }
+
+    // Thuật toán định dạng HTML Divs
+    function formatHTML(html) {
+        let clean = html.replace(/\s+/g, ' ').replace(/>\s+</g, '><').trim();
+        let formatted = '';
+        let indent = 0;
+        const tab = '    ';
+
+        const tokens = clean.split(/(<\/?[a-zA-Z0-9\-]+[^>]*>)/);
+
+        tokens.forEach(token => {
+            if (!token.trim()) return;
+
+            if (token.match(/^<\/ /) || token.match(/^<\//)) {
+                indent--;
+                formatted += '\n' + tab.repeat(Math.max(0, indent)) + token;
+            } 
+            else if (token.match(/^<[^>]*\/>/) || token.match(/^<!--/)) {
+                formatted += '\n' + tab.repeat(Math.max(0, indent)) + token;
+            } 
+            else if (token.match(/^<[a-zA-Z0-9\-]+/)) {
+                formatted += '\n' + tab.repeat(Math.max(0, indent)) + token;
+                indent++;
+            } 
+            else {
+                formatted += '\n' + tab.repeat(Math.max(0, indent)) + token;
+            }
+        });
+
+        return formatted.trim();
     }
 
     function processFormat() {
@@ -339,16 +433,12 @@
         let result = '';
         
         if (currentMode === 'js') {
-            // Loại bỏ xuống dòng và gộp khoảng trắng thừa
+            result = formatJS(input);
+        } else if (currentMode === 'css') {
             let flat = input.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
-            // Tự động xuống dòng trước function, const, let, var
-            const regex = /\s+(?=(function|const|let|var)\b)/g;
-            result = flat.replace(regex, '\n');
-        } else {
-            // Loại bỏ xuống dòng và khoảng trắng của CSS
-            let flat = input.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
-            // Tách dòng ngay sau mỗi dấu đóng ngoặc nhọn '}'
             result = flat.replace(/}\s*/g, '}\n');
+        } else {
+            result = formatHTML(input);
         }
 
         document.getElementById('outputCode').value = result;
