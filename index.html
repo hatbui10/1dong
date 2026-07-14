@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chuyển Code Thành 1 Dòng</title>
+
+<style>
+body{
+    font-family:Arial,sans-serif;
+    background:#f2f2f2;
+    padding:20px;
+}
+
+h2{
+    text-align:center;
+}
+
+textarea{
+    width:100%;
+    height:260px;
+    font-family:Consolas,monospace;
+    font-size:14px;
+    padding:10px;
+    box-sizing:border-box;
+    margin-bottom:15px;
+}
+
+button{
+    padding:12px 20px;
+    margin:5px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+#output{
+    background:#fff;
+}
+</style>
+</head>
+
+<body>
+
+<h2>Chuyển Code Thành Một Dòng</h2>
+
+<textarea id="input" placeholder="Dán code vào đây..."></textarea>
+
+<div>
+<button onclick="convert()">Chuyển thành 1 dòng</button>
+<button onclick="copyResult()">Copy</button>
+<button onclick="clearAll()">Xóa</button>
+</div>
+
+<h3>Kết quả</h3>
+
+<textarea id="output" readonly></textarea>
+
+<script>
+
+function convert(){
+
+    let code=document.getElementById("input").value;
+
+    code=code.replace(/\r?\n/g," ");
+
+    code=code.replace(/\s{2,}/g," ");
+
+    document.getElementById("output").value=code.trim();
+
+}
+
+function copyResult(){
+
+    const out=document.getElementById("output");
+
+    out.select();
+
+    document.execCommand("copy");
+
+    alert("Đã copy!");
+}
+
+function clearAll(){
+
+    document.getElementById("input").value="";
+
+    document.getElementById("output").value="";
+
+}
+
+document.getElementById("input").addEventListener("paste",function(){
+
+    setTimeout(convert,50);
+
+});
+
+</script>
+
+</body>
+</html>
