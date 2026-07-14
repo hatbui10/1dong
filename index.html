@@ -1,100 +1,377 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chuyển Code Thành 1 Dòng</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code & Style Merger</title>
+    <style>
+        :root {
+            --bg-color: #080810;
+            --container-bg: #0d0d16;
+            --card-bg: #0a0a12;
+            --neon-blue: #00f0ff;
+            --neon-pink: #ff007f;
+            --gold: #ffd700;
+            --text-color: #94a3b8;
+            --text-light: #f1f5f9;
+        }
 
-<style>
-body{
-    font-family:Arial,sans-serif;
-    background:#f2f2f2;
-    padding:20px;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-h2{
-    text-align:center;
-}
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
 
-textarea{
-    width:100%;
-    height:260px;
-    font-family:Consolas,monospace;
-    font-size:14px;
-    padding:10px;
-    box-sizing:border-box;
-    margin-bottom:15px;
-}
+        .container {
+            width: 100%;
+            max-width: 500px;
+            /* Áp dụng chuẩn khoảng cách của bạn */
+            margin-top: 30px;
+            margin-left: 3px;
+            margin-right: 3px;
+            background: var(--container-bg);
+            border: 1px solid #1e293b;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            padding: 24px 16px;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
 
-button{
-    padding:12px 20px;
-    margin:5px;
-    cursor:pointer;
-    font-size:16px;
-}
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 5px;
+        }
 
-#output{
-    background:#fff;
-}
-</style>
+        .header h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: linear-gradient(to right, var(--neon-blue), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-top: 8px;
+        }
+
+        /* Mode Selector Tabs */
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            background: #05050a;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1px solid #1e293b;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            padding: 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.25s ease;
+        }
+
+        .tab-btn.active[data-mode="js"] {
+            background: rgba(0, 240, 255, 0.05);
+            color: var(--neon-blue);
+            border: 1px solid var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
+        }
+
+        .tab-btn.active[data-mode="css"] {
+            background: rgba(255, 0, 127, 0.05);
+            color: var(--neon-pink);
+            border: 1px solid var(--neon-pink);
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.15);
+        }
+
+        .tab-btn img, .tab-btn span.icon {
+            font-size: 1.1rem;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #070913;
+            border-left: 3px solid var(--neon-blue);
+            padding: 12px;
+            border-radius: 0 8px 8px 0;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .info-box.css-info {
+            border-left-color: var(--neon-pink);
+        }
+
+        .info-box strong {
+            color: var(--text-light);
+        }
+
+        .highlight-js {
+            color: #ff007f;
+            background: rgba(255, 0, 127, 0.1);
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        /* Textarea Containers */
+        .field-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            position: relative;
+        }
+
+        .field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .field-header label {
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: var(--text-light);
+            text-transform: uppercase;
+        }
+
+        .char-count {
+            font-size: 0.75rem;
+            color: #475569;
+        }
+
+        textarea {
+            width: 100%;
+            height: 140px;
+            background: #05050a;
+            border: 1px solid #1e293b;
+            color: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 0.8rem;
+            line-height: 1.5;
+            outline: none;
+            resize: vertical;
+            transition: all 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: var(--neon-blue);
+            box-shadow: 0 0 10px rgba(0, 240, 255, 0.1);
+        }
+
+        /* Action Buttons */
+        .action-btn {
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink));
+            color: #fff;
+            border: none;
+            padding: 14px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 0, 127, 0.2);
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:active {
+            transform: scale(0.97);
+            filter: brightness(1.1);
+        }
+
+        /* Copy Button Overlay */
+        .copy-btn {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #94a3b8;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #334155;
+            color: #fff;
+        }
+
+        .copy-btn.copied {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+            color: #10b981;
+        }
+    </style>
 </head>
-
 <body>
 
-<h2>Chuyển Code Thành Một Dòng</h2>
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <h1>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: middle;">
+                <path d="M4 12V5a2 2 0 0 1 2-2h7l5 5v4"/>
+                <path d="M14 3v5h5"/>
+                <path d="M16 16l-4-4-4 4"/>
+                <path d="M12 12v9"/>
+            </svg>
+            Merger Pro
+        </h1>
+        <p>Định dạng và gộp các khối logic thành một dòng cực nhanh</p>
+    </div>
 
-<textarea id="input" placeholder="Dán code vào đây..."></textarea>
+    <!-- Tabs -->
+    <div class="tabs">
+        <button class="tab-btn active" data-mode="js" onclick="switchMode('js')">
+            <span class="icon" style="color: #f7df1e;">JS</span>
+            Code (JS/TS/HTML)
+        </button>
+        <button class="tab-btn" data-mode="css" onclick="switchMode('css')">
+            <span class="icon" style="color: #00f0ff;">CSS</span>
+            Stylesheet (CSS)
+        </button>
+    </div>
 
-<div>
-<button onclick="convert()">Chuyển thành 1 dòng</button>
-<button onclick="copyResult()">Copy</button>
-<button onclick="clearAll()">Xóa</button>
+    <!-- Info Box -->
+    <div id="infoBox" class="info-box">
+        <strong>Chế độ JS:</strong> Tự động viết gộp toàn bộ nội dung của các biến, hàm lại thành 1 dòng. Trình gộp sẽ tự động xuống dòng khi phát hiện từ khóa tiếp theo: <span class="highlight-js">function</span>, <span class="highlight-js">const</span>, <span class="highlight-js">let</span>, hoặc <span class="highlight-js">var</span>.
+    </div>
+
+    <!-- Input -->
+    <div class="field-group">
+        <div class="field-header">
+            <label for="inputCode">Dán mã nguồn vào đây:</label>
+            <span class="char-count" id="inputCharCount">0 ký tự</span>
+        </div>
+        <textarea id="inputCode" placeholder="Nhập hoặc dán mã của bạn tại đây..." oninput="updateCharCount()"></textarea>
+    </div>
+
+    <!-- Format Button -->
+    <button class="action-btn" onclick="processFormat()">Định Dạng Code</button>
+
+    <!-- Output -->
+    <div class="field-group">
+        <div class="field-header">
+            <label for="outputCode">Kết quả:</label>
+        </div>
+        <textarea id="outputCode" readonly placeholder="Kết quả sau khi xử lý sẽ hiển thị tại đây..."></textarea>
+        <button class="copy-btn" id="copyBtn" onclick="copyResult()">Copy</button>
+    </div>
 </div>
 
-<h3>Kết quả</h3>
-
-<textarea id="output" readonly></textarea>
-
 <script>
+    let currentMode = 'js';
 
-function convert(){
+    function switchMode(mode) {
+        currentMode = mode;
+        
+        // Cập nhật trạng thái Active của các Tab
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.remove('active');
+        });
+        document.querySelector(`.tab-btn[data-mode="${mode}"]`).classList.add('active');
 
-    let code=document.getElementById("input").value;
+        // Cập nhật hộp thông tin hướng dẫn
+        const infoBox = document.getElementById('infoBox');
+        if (mode === 'js') {
+            infoBox.className = 'info-box';
+            infoBox.innerHTML = `<strong>Chế độ JS:</strong> Tự động viết gộp toàn bộ nội dung của các biến, hàm lại thành 1 dòng. Trình gộp sẽ tự động xuống dòng khi phát hiện từ khóa tiếp theo: <span class="highlight-js">function</span>, <span class="highlight-js">const</span>, <span class="highlight-js">let</span>, hoặc <span class="highlight-js">var</span>.`;
+        } else {
+            infoBox.className = 'info-box css-info';
+            infoBox.innerHTML = `<strong>Chế độ CSS:</strong> Tự động dọn dẹp toàn bộ khoảng trắng dư thừa, đưa mỗi block selector kèm các thuộc tính bên trong nó về nằm gọn gàng trên 1 dòng duy nhất, xuống dòng sau dấu <span class="highlight-js">}</span>.`;
+        }
+        
+        // Reset kết quả khi chuyển tab
+        document.getElementById('outputCode').value = '';
+    }
 
-    code=code.replace(/\r?\n/g," ");
+    function updateCharCount() {
+        const text = document.getElementById('inputCode').value;
+        document.getElementById('inputCharCount').innerText = `${text.length} ký tự`;
+    }
 
-    code=code.replace(/\s{2,}/g," ");
+    function processFormat() {
+        const input = document.getElementById('inputCode').value;
+        if (!input.trim()) {
+            document.getElementById('outputCode').value = '';
+            return;
+        }
 
-    document.getElementById("output").value=code.trim();
+        let result = '';
+        
+        if (currentMode === 'js') {
+            // Loại bỏ xuống dòng và gộp khoảng trắng thừa
+            let flat = input.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
+            // Tự động xuống dòng trước function, const, let, var
+            const regex = /\s+(?=(function|const|let|var)\b)/g;
+            result = flat.replace(regex, '\n');
+        } else {
+            // Loại bỏ xuống dòng và khoảng trắng của CSS
+            let flat = input.replace(/\r?\n|\r/g, ' ').replace(/\s+/g, ' ').trim();
+            // Tách dòng ngay sau mỗi dấu đóng ngoặc nhọn '}'
+            result = flat.replace(/}\s*/g, '}\n');
+        }
 
-}
+        document.getElementById('outputCode').value = result;
+    }
 
-function copyResult(){
+    function copyResult() {
+        const output = document.getElementById('outputCode');
+        if (!output.value.trim()) return;
 
-    const out=document.getElementById("output");
+        output.select();
+        document.execCommand('copy');
 
-    out.select();
+        const copyBtn = document.getElementById('copyBtn');
+        copyBtn.innerText = 'Đã Copy!';
+        copyBtn.classList.add('copied');
 
-    document.execCommand("copy");
-
-    alert("Đã copy!");
-}
-
-function clearAll(){
-
-    document.getElementById("input").value="";
-
-    document.getElementById("output").value="";
-
-}
-
-document.getElementById("input").addEventListener("paste",function(){
-
-    setTimeout(convert,50);
-
-});
-
+        setTimeout(() => {
+            copyBtn.innerText = 'Copy';
+            copyBtn.classList.remove('copied');
+        }, 2000);
+    }
 </script>
 
 </body>
-</html>
+    </html>
+    
