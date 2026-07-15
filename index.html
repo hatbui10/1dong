@@ -87,7 +87,7 @@
 
         .tab-btn {
             background: transparent;
-            border: none;
+            border: 1px solid #1e293b;
             color: #64748b;
             padding: 10px 4px;
             border-radius: 8px;
@@ -294,11 +294,12 @@
 
     <!-- Output -->
     <div class="field-group">
+        <button class="copy-btn" id="copyBtn" onclick="copyResult()">Copy</button>
         <div class="field-header">
             <label for="outputCode">Kết quả:</label>
         </div>
         <textarea id="outputCode" readonly placeholder="Kết quả sau khi xử lý sẽ hiển thị tại đây..."></textarea>
-        <button class="copy-btn" id="copyBtn" onclick="copyResult()">Copy</button>
+        
     </div>
 </div>
 
